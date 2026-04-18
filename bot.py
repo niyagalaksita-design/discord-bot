@@ -30,6 +30,10 @@ class VerifyButton(discord.ui.View):
 async def on_ready():
     bot.add_view(VerifyButton())
     print(f"Bot online: {bot.user}")
+    for guild in bot.guilds:
+        if guild.id != ALLOWED_GUILD_ID:
+            await guild.leave()
+            print(f"Keluar dari server: {guild.name}")
 
 @bot.event
 async def on_guild_join(guild):
