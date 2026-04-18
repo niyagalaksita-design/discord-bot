@@ -10,17 +10,34 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 VERIFIED_ROLE_NAME = "Warga XML"
 
+class VerifyButton(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="✅ Klik untuk Verifikasi", style=discord.ButtonStyle.green, custom_id="verify_button")
+    async def verify(self, interaction: discord.Interaction, button: discord.ui.Button):
+        role = discord.utils.get(interaction.guild.roles, name=VERIFIED_ROLE_NAME)
+        if role in interaction.user.roles:
+            await interaction.response.send_message("⚠️ Kamu sudah terverifikasi!", ephemeral=True)
+        elif role:
+            await interaction.user.add_roles(role)
+            await interaction.response.send_message("✅ Kamu sudah terverifikasi!", ephemeral=True)
+        else:
+            await interaction.response.send_message("❌ Role tidak ditemukan. Hubungi admin.", ephemeral=True)
+
 @bot.event
 async def on_ready():
+    bot.add_view(VerifyButton())
     print(f"Bot online: {bot.user}")
 
 @bot.command()
-async def verify(ctx):
-    role = discord.utils.get(ctx.guild.roles, name=VERIFIED_ROLE_NAME)
-    if role:
-        await ctx.author.add_roles(role)
-        await ctx.send(f"✅ {ctx.author.mention} sudah terverifikasi!")
-    else:
-        await ctx.send("❌ Role tidak ditemukan. Hubungi admin.")
+@commands.has_permissions(administrator=True)
+async def setup(ctx):
+    embed = discord.Embed(
+        title="✅ Verifikasi Member",
+        description="Klik tombol di bawah untuk mendapatkan akses ke server.",
+        color=discord.Color.green()
+    )
+    await ctx.send(embed=embed, view=VerifyButton())
 
 bot.run(os.environ.get("DISCORD_TOKEN"))
