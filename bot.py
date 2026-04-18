@@ -9,6 +9,7 @@ intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 VERIFIED_ROLE_NAME = "Warga XML"
+ALLOWED_GUILD_ID = 1452197469793419296
 
 class VerifyButton(discord.ui.View):
     def __init__(self):
@@ -30,9 +31,17 @@ async def on_ready():
     bot.add_view(VerifyButton())
     print(f"Bot online: {bot.user}")
 
+@bot.event
+async def on_guild_join(guild):
+    if guild.id != ALLOWED_GUILD_ID:
+        await guild.leave()
+        print(f"Keluar dari server tidak diizinkan: {guild.name}")
+
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def setup(ctx):
+    if ctx.guild.id != ALLOWED_GUILD_ID:
+        return
     embed = discord.Embed(
         title="✅ Verifikasi Member",
         description="Klik tombol di bawah untuk mendapatkan akses ke server.",
