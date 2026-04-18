@@ -8,7 +8,7 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-VERIFIED_ROLE_NAME = "Verified"
+VERIFIED_ROLE_NAME = "Warga XML"
 
 @bot.event
 async def on_ready():
@@ -21,6 +21,6 @@ async def verify(ctx):
         await ctx.author.add_roles(role)
         await ctx.send(f"✅ {ctx.author.mention} sudah terverifikasi!")
     else:
-        await ctx.send("❌ Role 'Verified' tidak ditemukan.")
+        await ctx.send("❌ Role tidak ditemukan. Hubungi admin.")
 
 bot.run(os.environ.get("DISCORD_TOKEN"))
